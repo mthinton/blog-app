@@ -1,0 +1,32 @@
+{
+  "name": "blogpostapp",
+  "version": "1.0.0",
+  "description": "blogging app",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mongoose": "^5.0.0",
+    "morgan": "^1.7.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "faker": "^3.1.0",
+    "mocha": "^3.2.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mthinton/blog-app.git"
+  },
+  "author": "Matthew Hinton",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mthinton/blog-app/issues"
+  },
+  "homepage": "https://github.com/mthinton/blog-app#readme"
+}
