@@ -20,7 +20,7 @@ app.get('/posts', (req, res) => {
   Blogpost
     .find()
     // we're limiting for demo purposes
-    .limit(10)
+    //.limit(10)
     // `exec` returns a promise
     .exec()
     // success callback: for each post we get back, we'll
@@ -39,86 +39,83 @@ app.get('/posts', (req, res) => {
     });
 });
 
-// // can also request by ID
-// app.get('/restaurants/:id', (req, res) => {
-//   Restaurant
-//     // this is a convenience method Mongoose provides for searching
-//     // by the object _id property
-//     .findById(req.params.id)
-//     .exec()
-//     .then(restaurant =>res.json(restaurant.apiRepr()))
-//     .catch(err => {
-//       console.error(err);
-//         res.status(500).json({message: 'Internal server error'})
-//     });
-// });
+// can also request by ID
+app.get('/posts/:id', (req, res) => {
+  Blogpost
+    // this is a convenience method Mongoose provides for searching
+    // by the object _id property
+    .findById(req.params.id)
+    .exec()
+    .then(post =>res.json(post.serialize()))
+    .catch(err => {
+      console.error(err);
+        res.status(500).json({message: 'Internal server error'})
+    });
+});
 
 
-// app.post('/restaurants', (req, res) => {
+app.post('/posts', (req, res) => {
 
-//   const requiredFields = ['name', 'borough', 'cuisine'];
-//   for (let i=0; i<requiredFields.length; i++) {
-//     const field = requiredFields[i];
-//     if (!(field in req.body)) {
-//       const message = `Missing \`${field}\` in request body`
-//       console.error(message);
-//       return res.status(400).send(message);
-//     }
-//   }
+  const requiredFields = ['author', 'content', 'title'];
+  for (let i=0; i<requiredFields.length; i++) {
+    const field = requiredFields[i];
+    if (!(field in req.body)) {
+      const message = `Missing \`${field}\` in request body`
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  }
 
-//   Restaurant
-//     .create({
-//       name: req.body.name,
-//       borough: req.body.borough,
-//       cuisine: req.body.cuisine,
-//       grades: req.body.grades,
-//       address: req.body.address})
-//     .then(
-//       restaurant => res.status(201).json(restaurant.apiRepr()))
-//     .catch(err => {
-//       console.error(err);
-//       res.status(500).json({message: 'Internal server error'});
-//     });
-// });
+  Blogpost
+    .create({
+      title: req.body.title,
+      content: req.body.content,
+      author: req.body.author})
+    .then(post => res.status(201).json(post.serialize()))
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({message: 'Internal server error'});
+    });
+});
 
 
-// app.put('/restaurants/:id', (req, res) => {
-//   // ensure that the id in the request path and the one in request body match
-//   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
-//     const message = (
-//       `Request path id (${req.params.id}) and request body id ` +
-//       `(${req.body.id}) must match`);
-//     console.error(message);
-//     res.status(400).json({message: message});
-//   }
+app.put('/posts/:id', (req, res) => {
+  // ensure that the id in the request path and the one in request body match
+  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+    const message = (
+      `Request path id (${req.params.id}) and request body id ` +
+      `(${req.body.id}) must match`);
+    console.error(message);
+    res.status(400).json({message: message});
+  }
 
-//   // we only support a subset of fields being updateable.
-//   // if the user sent over any of the updatableFields, we udpate those values
-//   // in document
-//   const toUpdate = {};
-//   const updateableFields = ['name', 'borough', 'cuisine', 'address'];
+  // we only support a subset of fields being updateable.
+  // if the user sent over any of the updatableFields, we udpate those values
+  // in document
+  const toUpdate = {};
+  const updateableFields = ['author', 'content', 'title'];
 
-//   updateableFields.forEach(field => {
-//     if (field in req.body) {
-//       toUpdate[field] = req.body[field];
-//     }
-//   });
+  updateableFields.forEach(field => {
+    if (field in req.body) {
+      toUpdate[field] = req.body[field];
+    }
+  });
 
-//   Restaurant
-//     // all key/value pairs in toUpdate will be updated -- that's what `$set` does
-//     .findByIdAndUpdate(req.params.id, {$set: toUpdate})
-//     .exec()
-//     .then(restaurant => res.status(204).end())
-//     .catch(err => res.status(500).json({message: 'Internal server error'}));
-// });
+  Blogpost
+    // all key/value pairs in toUpdate will be updated -- that's what `$set` does
+    .findByIdAndUpdate(req.params.id, {$set: toUpdate})
+    .exec()
+    .then(post => res.status(204).end())
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
 
-// app.delete('/restaurants/:id', (req, res) => {
-//   Restaurant
-//     .findByIdAndRemove(req.params.id)
-//     .exec()
-//     .then(restaurant => res.status(204).end())
-//     .catch(err => res.status(500).json({message: 'Internal server error'}));
-// });
+app.delete('/posts/:id', (req, res) => {
+  Blogpost
+    .findByIdAndRemove(req.params.id)
+    .exec()
+    .then(post => res.status(204).end())
+    .catch(err => res.status(500).json({message: 'Internal server error'}));
+});
 
 // catch-all endpoint if client makes request to non-existent endpoint
 app.use('*', function(req, res) {
