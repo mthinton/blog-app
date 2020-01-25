@@ -23,7 +23,7 @@ blogpostSchema.virtual('authorString').get(function() {
 // this is an *instance method* which will be available on all instances
 // of the model. This method will be used to return an object that only
 // exposes *some* of the fields we want from the underlying data
-blogpostSchema.methods.apiRepr = function() {
+blogpostSchema.methods.serialize = function() {
 
   return {
     id: this._id,
@@ -31,10 +31,10 @@ blogpostSchema.methods.apiRepr = function() {
     content: this.content,
     author: this.authorString
   };
-}
+};
 
 // note that all instance methods and virtual properties on our
 // schema must be defined *before* we make the call to `.model`.
-const Blogpost = mongoose.model('Blogpost', blogpostSchema);
+const Blogpost = mongoose.model('posts', blogpostSchema);
 
 module.exports = {Blogpost};
