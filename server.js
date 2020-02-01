@@ -19,23 +19,19 @@ app.use(bodyParser.json());
 app.get('/posts', (req, res) => {
   Blogpost
     .find()
-    // we're limiting for demo purposes
-    //.limit(10)
-    // `exec` returns a promise
-    .exec()
-    // success callback: for each post we get back, we'll
-    // call the `.apiRepr` instance method we've created in
-    // models.js in order to only expose the data we want the API return.
     .then(posts => {
-      res.json({
-        posts: posts.map(
-          (post) => post.serialize())
-      });
+      res.json(posts.map(post => {
+        return {
+          id: post._id,
+          author: post.authorName,
+          content: post.content,
+          title: post.title
+        };
+      }));
     })
-    .catch(
-      err => {
-        console.error(err);
-        res.status(500).json({message: 'Internal server error'});
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'something went terribly wrong' });
     });
 });
 

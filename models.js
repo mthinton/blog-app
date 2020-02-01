@@ -1,23 +1,40 @@
 const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
-// this is our schema to represent a blog post
-const blogpostSchema = mongoose.Schema({
-  title: {type: String, required: true},
-  content: {type: String, required: true},
-  author: {
-    firstName: String,
-    lastName: String
+const authorSchema = mongoose.Schema({
+  firstName: 'string',
+  lastName: 'string',
+  userName: {
+    type: 'string',
+    unique: true
   },
-  created: {type: Date, default: Date.now}
 });
+
+const commentSchema = mongoose.Schema({content: 'string'});
+
+// these are our schemas to represent a blog post and an author
+const blogpostSchema = mongoose.Schema({
+  title: 'string',
+  content: 'string',
+  author: {type: mongoose.Schema.Types.ObjectId, ref: 'Author'},
+  comments: [commentSchema]
+});
+
+blogpostSchema.pre('find', function(next){
+  this.populate('author');
+  next();
+})
 
 // *virtuals* (http://mongoosejs.com/docs/guide.html#virtuals)
 // allow us to define properties on our object that manipulate
 // properties that are stored in the database. Here we use it
 // to generate a human readable string based on the author object
 // we're storing in Mongo.
-blogpostSchema.virtual('authorString').get(function() {
-  return `${this.author.firstName} ${this.author.lastName}`.trim()});
+
+blogpostSchema.virtual('authorName').get(function() {
+  return `${this.author.firstName} ${this.author.lastName}`.trim();
+});
+
 
 
 // this is an *instance method* which will be available on all instances
@@ -27,14 +44,16 @@ blogpostSchema.methods.serialize = function() {
 
   return {
     id: this._id,
-    title: this.title,
+    author: this.authorName,
     content: this.content,
-    author: this.authorString
+    title: this.title,
+    comments:this.comments
   };
 };
 
 // note that all instance methods and virtual properties on our
 // schema must be defined *before* we make the call to `.model`.
 const Blogpost = mongoose.model('posts', blogpostSchema);
+const Author = mongoose.model('authors', authorSchema);
 
-module.exports = {Blogpost};
+module.exports = {Blogpost, Author};
