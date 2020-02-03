@@ -9,26 +9,18 @@ mongoose.Promise = global.Promise;
 // config.js is where we control constants for entire
 // app like PORT and DATABASE_URL
 const {PORT, DATABASE_URL} = require('./config');
-const {Blogpost, Author} = require('./models');
+const {Blogpost, } = require('./models');
 
 const app = express();
 app.use(bodyParser.json());
 
-
 // GET requests to /posts => return 10 posts
 app.get('/posts', (req, res) => {
   Blogpost
-    .find()
-    .then(posts => {
-      res.json(posts.map(post => {
-        return {
-          id: post._id,
-          author: post.authorName,
-          content: post.content,
-          title: post.title
-        };
-      }));
-    })
+  .find()
+  .then(posts => {
+    res.json(posts.map(post => post.serialize()));
+  })
     .catch(err => {
       console.error(err);
       res.status(500).json({ error: 'something went terribly wrong' });
