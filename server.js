@@ -9,18 +9,142 @@ mongoose.Promise = global.Promise;
 // config.js is where we control constants for entire
 // app like PORT and DATABASE_URL
 const {PORT, DATABASE_URL} = require('./config');
-const {Blogpost, } = require('./models');
+const {Blogpost} = require('./models');
+const {Author} = require('./models');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(express.json());
 
-// GET requests to /posts => return 10 posts
+app.put('/authors/:id', (req, res) => {
+  if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
+    res.status(400).json({
+      error: 'Request path id and request body id values must match'
+    });
+  }
+
+  const updated = {};
+  const updateableFields = ['firstName', 'lastName', 'userName'];
+  updateableFields.forEach(field => {
+    if (field in req.body) {
+      updated[field] = req.body[field];
+    }
+  });
+
+  Author
+  .findOne({ userName: updated.userName || '', _id: { $ne: req.params.id } })
+  .then(author => {
+    if(author) {
+      const message = `Username already taken`;
+      console.error(message);
+      return res.status(400).send(message);
+    }
+    else {
+      Author
+        .findByIdAndUpdate(req.params.id, { $set: updated }, { new: true })
+        .then(updatedAuthor => {
+          res.status(200).json({
+            id: updatedAuthor.id,
+            name: `${updatedAuthor.firstName} ${updatedAuthor.lastName}`,
+            userName: updatedAuthor.userName
+          });
+        })
+        .catch(err => res.status(500).json({ message: err }));
+    }
+  });
+})
+
+app.post('/authors', (req, res) => {
+  const expectedFields = ["firstName", "lastName", "userName"];
+  expectedFields.forEach(field => {
+    if (!(field in req.body)) {
+      const message = `Missing \`${field}\` in request body`
+      console.error(message);
+      return res.status(400).send(message);
+    }
+  })
+  Author
+    .findOne({ userName: req.body.userName })
+    .then(author => {
+      if (author) {
+        const message = `Username already taken`;
+        console.error(message);
+        return res.status(400).send(message);
+      }
+      else {
+        Author
+          .create({
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            userName: req.body.userName
+          })
+          .then(author => res.status(201).json({
+              _id: author.id,
+              name: `${author.firstName} ${author.lastName}`,
+              userName: author.userName
+            }))
+          .catch(err => {
+            console.error(err);
+            res.status(500).json({ error: 'Something went wrong' });
+          });
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'something went horribly awry' });
+    });
+})
+
+app.get('/authors', (req, res) => {
+  Author
+    .find()
+    .then(authors => {
+      res.json(authors.map(author => {
+        return {
+          id: author._id,
+          name: `${author.firstName} ${author.lastName}`,
+          userName: author.userName
+        };
+      }));
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'something went terribly wrong' });
+    });
+});
+
+app.delete('/authors/:id', (req, res) => {
+  Blogpost
+    .remove({ author: req.params.id })
+    .then(() => {
+      Author
+        .findByIdAndRemove(req.params.id)
+        .then(() => {
+          console.log(`Deleted blog posts owned by and author with id \`${req.params.id}\``);
+          res.status(204).json({ message: 'success' });
+        });
+    })
+    .catch(err => {
+      console.error(err);
+      res.status(500).json({ error: 'something went terribly wrong' });
+    });
+});
+
+
+// GET requests to /posts 
 app.get('/posts', (req, res) => {
   Blogpost
-  .find()
-  .then(posts => {
-    res.json(posts.map(post => post.serialize()));
-  })
+    .find()
+    .then(posts => {
+      res.json(posts.map(post => {
+        return {
+          id: post._id,
+          author: post.authorName,
+          content: post.content,
+          title: post.title
+        };
+      }));
+    })
     .catch(err => {
       console.error(err);
       res.status(500).json({ error: 'something went terribly wrong' });
@@ -44,7 +168,7 @@ app.get('/posts/:id', (req, res) => {
 
 app.post('/posts', (req, res) => {
 
-  const requiredFields = ['author', 'content', 'title'];
+  const requiredFields = ['author_id', 'content', 'title'];
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -54,17 +178,51 @@ app.post('/posts', (req, res) => {
     }
   }
 
-  Blogpost
-    .create({
-      title: req.body.title,
-      content: req.body.content,
-      author: req.body.author})
-    .then(post => res.status(201).json(post.serialize()))
+  Author
+  .findById(req.body.author_id)
+  .then(author => {
+    if(author) {
+      Blogpost
+        .create({
+          title: req.body.title,
+          content: req.body.content,
+          author: req.body.author_id
+        })
+        .then(blogPost => res.status(201).json({
+          id: blogPost.id,
+          author: `${author.firstName} ${author.lastName}`,
+          content: blogPost.content,
+          title: blogPost.title,
+          comments: blogPost.comments
+        }))
     .catch(err => {
       console.error(err);
       res.status(500).json({message: 'Internal server error'});
     });
-});
+    }
+    else{
+      const message = `Author not found!`;
+      console.err(message);
+      return res.status(400).send(message);
+    }
+  })
+   .catch(err => {
+    console.error(err);
+    res.status(500).json({error: 'something went horribly awry'})
+  })
+
+
+//   Blogpost
+//     .create({
+//       title: req.body.title,
+//       content: req.body.content,
+//       author: author._id})
+//     .then(post => res.status(201).json(post.serialize()))
+//     .catch(err => {
+//       console.error(err);
+//       res.status(500).json({message: 'Internal server error'});
+//     });
+ });
 
 
 app.put('/posts/:id', (req, res) => {
@@ -81,7 +239,7 @@ app.put('/posts/:id', (req, res) => {
   // if the user sent over any of the updatableFields, we udpate those values
   // in document
   const toUpdate = {};
-  const updateableFields = ['author', 'content', 'title'];
+  const updateableFields = ['author', 'content', 'title', 'comments'];
 
   updateableFields.forEach(field => {
     if (field in req.body) {
