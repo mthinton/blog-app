@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 // Mongoose internally uses a promise-like object,
 // but its better to make Mongoose use built in es6 promises
@@ -16,6 +17,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.static("public"));
+app.use(cors())
 
 app.put('/authors/:id', (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
