@@ -15,6 +15,7 @@ const {Author} = require('./models');
 const app = express();
 app.use(bodyParser.json());
 app.use(express.json());
+app.use(express.static("public"));
 
 app.put('/authors/:id', (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
