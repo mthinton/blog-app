@@ -2,6 +2,9 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+var http = require('http');
+var fs = require("fs");
+var path = require('path');
 
 // Mongoose internally uses a promise-like object,
 // but its better to make Mongoose use built in es6 promises
@@ -134,6 +137,7 @@ app.delete('/authors/:id', (req, res) => {
 });
 
 
+
 // GET requests to /posts 
 app.get('/posts', (req, res) => {
   Blogpost
@@ -166,6 +170,8 @@ app.get('/posts/:id', (req, res) => {
       console.error(err);
         res.status(500).json({message: 'Internal server error'})
     });
+    
+
 });
 
 
