@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const mongoose = require('mongoose');
+const pug = require('pug');
 const cors = require('cors');
 var http = require('http');
 var fs = require("fs");
@@ -21,6 +22,7 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(express.static("public"));
 app.use(cors())
+app.set('view engine', 'pug')
 
 app.put('/authors/:id', (req, res) => {
   if (!(req.params.id && req.body.id && req.params.id === req.body.id)) {
@@ -170,10 +172,24 @@ app.get('/posts/:id', (req, res) => {
       console.error(err);
         res.status(500).json({message: 'Internal server error'})
     });
-    
-
 });
 
+app.get('/test/:id', function (req, res) {
+  let arrayOfComments = [];
+  Blogpost
+  // this is a convenience method Mongoose provides for searching
+  // by the object _id property
+  .findById(req.params.id)
+  .exec()
+  .then(post => res.render('index', { title: post.title, author: "Written By: " + post.author.firstName + " " + post.author.lastName, content: post.content, comments: post.comments}))
+  //.then(post => res.render('index', { title: post, message: 'Hello there!' }))
+  //.then(post =>res.json(post.serialize()))
+  
+  .catch(err => {
+    console.error(err);
+      res.status(500).json({message: 'Internal server error'})
+  });
+})
 
 app.post('/posts', (req, res) => {
 

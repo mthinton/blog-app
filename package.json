@@ -12,7 +12,8 @@
     "mongoose": "^5.0.0",
     "morgan": "^1.7.0",
     "nodemon": "^2.0.2",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "pug": "^2.0.4"
   },
   "devDependencies": {
     "chai": "^3.5.0",

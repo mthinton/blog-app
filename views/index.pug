@@ -1,0 +1,17 @@
+html
+  head
+    title= title
+    style 
+        include main.css
+  body
+    div#root
+      h1= title
+      h2= author
+      h3= content
+      div Comment Section
+      - for (var i = 0; i < comments.length; i++)
+        p= comments[i].content
+      script
+        include script.js
+
+
