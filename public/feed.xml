@@ -8,10 +8,8 @@
 
 		<item>
 			<title>Blog Post</title>
-			<link>URL Link to the entry</link>
-			<guid>https://www.mysite.com/?p=584674</guid>
+			<link>https://arcane-mesa-67390.herokuapp.com/test/5af50ff5c082f1e92f834266</link>
 			<description>This is the description of the content...</description>
-			<pubDate>Wed, July 4 2018</pubDate>
 		</item>
 	</channel>
 </rss>
