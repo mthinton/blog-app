@@ -181,7 +181,7 @@ app.get('/test/:id', function (req, res) {
   // by the object _id property
   .findById(req.params.id)
   .exec()
-  .then(post => res.render('index', { title: post.title, author: "Written By: " + post.author.firstName + " " + post.author.lastName, content: post.content, comments: post.comments}))
+  .then(post => res.render('index', { title: post.title, author: "Written By: " + post.author.firstName + " " + post.author.lastName, content: post.content, comments: post.comments, id: req.params.id}))
   //.then(post => res.render('index', { title: post, message: 'Hello there!' }))
   //.then(post =>res.json(post.serialize()))
   
@@ -189,6 +189,13 @@ app.get('/test/:id', function (req, res) {
     console.error(err);
       res.status(500).json({message: 'Internal server error'})
   });
+})
+
+app.put('/commentToPost', (req,res)=> {
+  Blogpost
+  .findById(req.params.id)
+  .exec()
+  .then(post)
 })
 
 app.post('/posts', (req, res) => {

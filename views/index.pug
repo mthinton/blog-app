@@ -8,9 +8,14 @@ html
       h1= title
       h2= author
       h3= content
+      h4.identifier= id
       div Comment Section
       - for (var i = 0; i < comments.length; i++)
         p= comments[i].content
+      
+      form.commentSection
+        input.comment
+        button.commentButton Click to Comment!
       script
         include script.js
 

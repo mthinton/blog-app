@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+	<channel>
+		<title>Matt's Blog</title>
+		<link>https://arcane-mesa-67390.herokuapp.com/</link>
+		<description>Blog site</description>
+		<language>en-us</language>
+		<image>
+			<title>Matt blog image</title>
+			<link>https://arcane-mesa-67390.herokuapp.com/</link>
+			<url>https://arcane-mesa-67390.herokuapp.com/Mountains.jpg</url>
+			<width>150</width>
+			<height>124</height>
+		</image>
+
+		<item>
+			<title>First ever RSS feed!</title>
+			<pubDate>Wed 22 Apr 2020 14:33</pubDate>
+			<link>https://arcane-mesa-67390.herokuapp.com/test/5af50ff5c082f1e92f834266</link>
+			<description><![CDATA[Visit this <a href="arcane-mesa-67390.herokuapp.com">link</a> to my website!]]></description>
+		</item>
+	</channel>
+</rss>
