@@ -16,7 +16,7 @@ app.appendChild(container)
 
 var request = new XMLHttpRequest()
 
-request.open('GET', 'http://localhost:8080/posts', true)
+request.open('GET', '/posts', true)
 
 request.onload = function(){
     var data = JSON.parse(this.response)
@@ -38,7 +38,7 @@ request.onload = function(){
         const button = document.createElement('button')
         button.type="button"
         button.textContent = "Click here to comment!"
-        button.setAttribute('onclick', `location.href="http://localhost:8080/test/${postId}"` )
+        button.setAttribute('onclick', `location.href="/test/${postId}"` )
         button.setAttribute('class', 'commentButton',)
 
 
