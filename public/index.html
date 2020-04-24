@@ -6,8 +6,21 @@
     <title>Blog App</title>
     <link href="https://fonts.googleapis.com/css?family=Dosis:400,700" rel="stylesheet" />
     <link href="main.css" rel="stylesheet" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-164374521-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-164374521-1');
+</script>
+
 </head>
 <body id="allPosts">
+    <a href="https://arcane-mesa-67390.herokuapp.com/feed.xml">
+        <img src="https://www.w3schools.com/xml/pic_rss.gif" width="36" height="14">
+        </a>
     <div id="root"></div>
     <script src="index.js"></script>
     <!--<script>(function(src){var a=document.createElement("script");a.type="text/javascript";a.async=true;a.src=src;var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b)})("https://sandbox.tinypass.com/xbuilder/experience/load?aid=bW69IEsHwA");</script>-->

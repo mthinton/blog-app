@@ -7,9 +7,9 @@
 		<language>en-us</language>
 
 		<item>
-			<title>Blog Post</title>
-			<link>https://arcane-mesa-67390.herokuapp.com/test/5af50ff5c082f1e92f834266</link>
-			<description>This is the description of the content...</description>
+			<title>Blog Post Revised</title>
+			<link>https://arcane-mesa-67390.herokuapp.com/test/5af50ff5c082f1e92f834266</link>gi
+			<description>This is the new description of the content...</description>
 		</item>
 	</channel>
 </rss>
