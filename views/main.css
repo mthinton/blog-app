@@ -101,3 +101,7 @@
   .card:nth-child(5n) h1 {
     background-image: linear-gradient(120deg, #ed8e4a 0%, #4a81ed 100%);
   }
+
+  .identifier{
+    display: none;
+  }

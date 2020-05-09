@@ -191,13 +191,6 @@ app.get('/test/:id', function (req, res) {
   });
 })
 
-app.put('/commentToPost', (req,res)=> {
-  Blogpost
-  .findById(req.params.id)
-  .exec()
-  .then(post)
-})
-
 app.post('/posts', (req, res) => {
 
   const requiredFields = ['author_id', 'content', 'title'];
@@ -256,6 +249,20 @@ app.post('/posts', (req, res) => {
 //     });
  });
 
+app.put('/addComment/:id', (req, res) => {
+  Blogpost
+  .update(
+    {_id: req.body.id},
+    { $push: {comments: req.body.comments} },
+    function(err, result) {
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(result);
+      }
+    }
+  )
+})
 
 app.put('/posts/:id', (req, res) => {
   // ensure that the id in the request path and the one in request body match
@@ -309,7 +316,7 @@ let server;
 function runServer(databaseUrl=DATABASE_URL, port=PORT) {
 
   return new Promise((resolve, reject) => {
-    mongoose.connect(databaseUrl, err => {
+    mongoose.connect(databaseUrl, { useNewUrlParser: true }, err => {
       if (err) {
         return reject(err);
       }
